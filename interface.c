@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <string.h>
+#include<stdio.h>
+#include<stdlib.h>
 #include "tourniquet.h"
 
 Process * scan_process(int id)
@@ -20,8 +20,8 @@ Process * scan_process(int id)
 	printf("\n") ;
 
 	P->id = id ;
+
 	P->status = NOT_EXECUTE ;
-	P->WT = 0 ;
 
 	return P ;
     }
@@ -33,23 +33,49 @@ Process * scan_process(int id)
     }
 }
 
-void calc(Process **tab , int size)
+void print(Process **tab, int size)
 {
     int i ;
+    float TAM = 0.0 , TRM = 0.0 , debit = tab[size-1]->CT/size ;
 
-    tab[0]->TAT = tab[0]->CT - tab[0]->AT ;
-    tab[0]->WT = tab[0]->TAT - tab[0]->BT ;
-    tab[0]->RT = tab[0]->TAT - tab[0]->BT ;
-
-    for(i = 1 ; i < size ; i++)
+    for(i = 0 ; i < size ; i++)
     {
-	tab[i]->TAT = tab[i]->CT - tab[i]->AT ;
-	tab[i]->WT = tab[i]->TAT - tab[i]->BT ;
-	tab[i]->RT = tab[i]->TAT - tab[i]->BT ;
+	TAM += tab[i]->WT ;
+	TRM += tab[i]->TAT ;
     }
+    
+    TAM = TAM/size ;
+    TRM = TRM/size ;
+    
+    printf("\n       Round Robin\n_____________________________________________\n\n");
+	
+    printf("Processus\t");
+    for (int i = 0; i < size; ++i)
+	printf("P%d\t",tab[i]->id );
+    printf("\n\n");
 
+    printf(" T Arrivée\t");
+    for (int i = 0; i < size; ++i)
+	printf("%d\t",tab[i]->AT );
+    printf("\n\n");
+
+    printf(" T Cycle \t");
+    for (int i = 0; i < size; ++i)
+	printf("%d\t",tab[i]->BT );
+    printf("\n\n");
+
+    printf("T Attente\t");
+    for (int i = 0; i < size; ++i)
+	printf("%d\t",tab[i]->WT );
+    printf("\n\n");
+
+    printf("T Séjour\t");
+    for (int i = 0; i < size; ++i)
+	printf("%d\t",tab[i]->TAT);
+    printf("\n\n");
+
+    printf("Temps d'attente moyen : %.2f\nTemps de rotation moyen : %.2f\nDebit : %.2f\n\n",TAM,TRM,debit );
 }
-
 
 void free_process(Process **tab , int size)
 {
@@ -57,74 +83,6 @@ void free_process(Process **tab , int size)
 
     for(i = 0 ; i < size ; i++)
 	free(tab[i]) ;
-}
 
-void print_entete(FILE *fichier)
-{
-    int cur = 0 ;
-
-    cur = fgetc(fichier) ;
-    
-    while(cur != 'X' && !feof(fichier))
-    {
-	printf("%c", cur);
-	cur = fgetc(fichier) ;
-    }
-}
-
-void search_car(FILE *fichier , char car)
-{
-    int cur ;
-    
-    rewind(fichier) ;
-
-    do
-    {
-	cur = fgetc(fichier) ;
-	if(cur == car)
-	    break ;
-    }while(!feof(fichier)) ;
-}
-    
-    
-void print(FILE *fichier , Process **tab , int size)
-{
-    int cur , i ;
-
-    print_entete(fichier) ;
-
-    for(i = 0 ; i < size ; i++)
-    {
-	search_car(fichier , 'X') ;
-	cur = fgetc(fichier) ;
-	do
-	{
-	    cur = fgetc(fichier) ;
-	    
-	    if( cur == '1')
-		printf("P%d", tab[i]->id);
-
-	    else if(cur == '2')
-		printf("%d", tab[i]->AT) ;
-
-	    else if(cur == '3')
-		printf("%d", tab[i]->BT) ;
-
-	    else if(cur == '4')
-		printf("%d", tab[i]->CT) ;
-
-	    else if(cur == '5')
-		printf("%d" , tab[i]->TAT) ;
-
-	    else if(cur =='6')
-		printf("%d" , tab[i]->WT) ;
-
-	    else if(cur == '7')
-		printf("%d" , tab[i]->RT) ;
-
-	    else if (cur != 'F')
-		printf("%c" , cur);
-	    
-	}while(cur != 'F');
-    }
+    free(tab);
 }

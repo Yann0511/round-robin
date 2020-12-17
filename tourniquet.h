@@ -27,11 +27,7 @@ void free_process(Process **tab , int size) ;
 
 int search_ct(Process **tab , int size) ;
 
-void print_entete(FILE *fichier) ;
-
-void search_car(FILE *fichier , char car) ;
-
-void print(FILE *fichier , Process **tab , int size) ;
+void print(Process **tab , int size) ;
 
 void copie_BT(Process **tab , int size , int *copie) ;
 

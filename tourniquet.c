@@ -45,6 +45,23 @@ int search_ct(Process **tab , int size)
     return ct ; 
 }
 
+void calc(Process **tab , int size)
+{
+    int i ;
+
+    tab[0]->TAT = tab[0]->CT - tab[0]->AT ;
+    tab[0]->WT = tab[0]->TAT - tab[0]->BT ;
+    tab[0]->RT = tab[0]->TAT - tab[0]->BT ;
+
+    for(i = 1 ; i < size ; i++)
+    {
+	tab[i]->TAT = tab[i]->CT - tab[i]->AT ;
+	tab[i]->WT = tab[i]->TAT - tab[i]->BT ;
+	tab[i]->RT = tab[i]->TAT - tab[i]->BT ;
+    }
+
+}
+
 
 void tourniquet(Process **tab , int size , int quantum)
 {
@@ -67,14 +84,14 @@ void tourniquet(Process **tab , int size , int quantum)
 	    copie[count] -= quantum ;
 	    time += quantum ;
 	    tab[count]->status = BLOQUER ;
-	    printf("\t P%d", tab[count]->id);
+	    printf("P%d  ->>  ", tab[count]->id);
 	}
 
 
 	if(tab[count]->status == EXECUTE && check == 1)
 	{
 	    remain -- ;
-	    printf("\t P%d", tab[count]->id);
+	    printf("P%d  ->>  ", tab[count]->id);
 	    tab[count]->CT = time ;
 	    check = 0 ;
 	}
@@ -88,7 +105,7 @@ void tourniquet(Process **tab , int size , int quantum)
 	else
 	    count = 0 ;
     }
-    printf("\n") ;
+    printf("Finish\n\n") ;
 
     calc(tab , size) ;
 }
